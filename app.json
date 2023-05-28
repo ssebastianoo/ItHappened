@@ -20,12 +20,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": {
-        
-      }
+      "package": "com.ssebastianoo.ItHappened"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a41f5cf4-be47-44f5-88ed-50f9886751b9"
+      }
     }
   }
 }

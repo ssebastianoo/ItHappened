@@ -10,7 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useState, useEffect } from "react";
-import config from "./config";
+import Config from "react-native-config";
 
 type Event = {
   id: number;
@@ -36,7 +36,7 @@ export default function App() {
     }, 10000);
 
     try {
-      const response = await fetch(`${config.apiUrl}/events`, {
+      const response = await fetch(`${Config.API_URL}/events`, {
         signal: controller.signal,
       });
       const data = (await response.json()) as Event[];
@@ -60,13 +60,9 @@ export default function App() {
   }
 
   async function createEvent() {
-    console.log("A");
-
     if (name === "" || description === "") {
       return;
     }
-
-    console.log("B");
 
     const controller = new AbortController();
     setTimeout(() => {
@@ -74,8 +70,7 @@ export default function App() {
     }, 10000);
 
     try {
-      console.log("C");
-      const res = await fetch(`${config.apiUrl}/events`, {
+      const res = await fetch(`${Config.API_URL}/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,15 +80,12 @@ export default function App() {
           description,
         }),
       });
-      console.log("D");
-      console.log(res.status);
       if (res.status === 200 || res.status === 201) {
         getEvents();
         setName("");
         setDescription("");
       }
     } catch (err) {
-      console.log("E");
       setError("Something went wrong. Please try again later.");
     }
   }
