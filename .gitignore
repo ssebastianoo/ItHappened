@@ -19,4 +19,4 @@ web-build/
 
 # Other
 api.exe
-config.ts
+app.json

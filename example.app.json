@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1d1e1f"
       },
       "package": "com.ssebastianoo.ItHappened"
     },
@@ -27,8 +27,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a41f5cf4-be47-44f5-88ed-50f9886751b9"
-      }
+        "projectId": "1234"
+      },
+      "apiUrl": "https://api.example.com"
     }
   }
 }

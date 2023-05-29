@@ -10,7 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useState, useEffect } from "react";
-import Config from "react-native-config";
+import Constants from "expo-constants";
 
 type Event = {
   id: number;
@@ -26,6 +26,8 @@ export default function App() {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
 
+  const apiUrl = Constants.manifest?.extra?.apiUrl;
+
   async function getEvents() {
     setEvents([]);
 
@@ -36,7 +38,7 @@ export default function App() {
     }, 10000);
 
     try {
-      const response = await fetch(`${Config.API_URL}/events`, {
+      const response = await fetch(`${apiUrl}/events`, {
         signal: controller.signal,
       });
       const data = (await response.json()) as Event[];
@@ -49,12 +51,17 @@ export default function App() {
       setRefreshing(false);
       setError(null);
     } catch (err) {
+      const error = err
+        ? err.toString()
+        : "Something went wrong. Please try again later.";
       setRefreshing(false);
-      setError("Something went wrong. Please try again later.");
+      setError(error);
     }
   }
 
   function onRefresh() {
+    console.log(apiUrl);
+
     setRefreshing(true);
     getEvents();
   }
@@ -70,7 +77,7 @@ export default function App() {
     }, 10000);
 
     try {
-      const res = await fetch(`${Config.API_URL}/events`, {
+      const res = await fetch(`${apiUrl}/events`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,6 +91,23 @@ export default function App() {
         getEvents();
         setName("");
         setDescription("");
+      }
+    } catch (err) {
+      // setError("Something went wrong. Please try again later.");
+      const error = err
+        ? err.toString()
+        : "Something went wrong. Please try again later.";
+      setError(error);
+    }
+  }
+
+  async function deleteEvent(id: number) {
+    try {
+      const res = await fetch(`${apiUrl}/events/${id}`, {
+        method: "DELETE",
+      });
+      if (res.status === 200 || res.status === 201) {
+        getEvents();
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
@@ -136,7 +160,16 @@ export default function App() {
               events.map((event) => (
                 <View key={event.id} style={styles.event}>
                   <View>
-                    <Text style={styles.eventName}>{event.name}</Text>
+                    <View style={styles.eventTop}>
+                      <Text style={styles.eventName}>{event.name}</Text>
+                      <Pressable
+                        onPress={() => {
+                          deleteEvent(event.id);
+                        }}
+                      >
+                        <Text style={styles.button}>Delete</Text>
+                      </Pressable>
+                    </View>
                     <Text style={styles.eventDate}>
                       {new Date(event.date).toLocaleString()}
                     </Text>
@@ -172,6 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     marginTop: 20,
+    marginBottom: 80,
   },
 
   event: {
@@ -183,6 +217,13 @@ const styles = StyleSheet.create({
   eventName: {
     color: "#ffffff",
     fontSize: 30,
+  },
+
+  eventTop: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   eventDescription: {
